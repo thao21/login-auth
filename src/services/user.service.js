@@ -6,8 +6,8 @@ export const userService = {
 
 const fakeUsers = [{
     code: 'warehouse_1',
-    email: 'wh123@com',
-    password: '123',
+    email: 'wh123@gmail.com',
+    password: '12345',
     name: 'Ware House 1'
 },
 {

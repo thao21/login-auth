@@ -11,9 +11,9 @@
             
           </div>
           <div class="error-mess d-flex" v-if="$v.loginID.$error">
-              <span v-if="!$v.loginID.required">Email is required.</span>
-              <span v-if="!$v.loginID.email">Must be valid e-mail.</span>
-            </div>
+            <span v-if="!$v.loginID.required">Email is required.</span>
+            <span v-if="!$v.loginID.email">Must be valid e-mail.</span>
+          </div>
           <div class="form-group" :class="[$v.password.$error ? 'error' : '' ]">
             <input v-model.trim="$v.password.$model" :type="[passwordFieldType ? 'password' : 'text']" class="form-control" id="password" placeholder="Input password">
             <svg class="icon-auth" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,10 +21,14 @@
             </svg> 
             <i @click="passwordFieldType = !passwordFieldType" class="icon-password" v-bind:class="[passwordFieldType ? 'eyes-close': 'eyes-open' ]"></i>  
           </div>
-          <div v-if="$v.password.$error">
-              <span style="color: red" v-if="!$v.password.required">Password is required.</span>
+          <div class="error-mess d-flex" v-if="$v.password.$error">
+            <span v-if="!$v.password.required">Password is required.</span>
+            <span v-if="!$v.password.minLength">Password must have at least 5 characters.</span>
           </div>
-          <button id="btn-submit" type="submit" class="btn btn-primary">Login</button>
+          <div class="d-flex align-items-center justify-content-between">
+            <router-link to="/register">Register</router-link>
+            <button id="btn-submit" type="submit" class="btn btn-primary">Login</button>
+          </div>
         </form>
 
       </div>
@@ -39,25 +43,16 @@ import { required, minLength, email  } from 'vuelidate/lib/validators'
 export default {
   name: "Login",
   data() {
-      return {
-          loginID: '',
-          password: '',
-          passwordFieldType: true
-      }
+    return {
+      loginID: '',
+      password: '',
+      passwordFieldType: true
+    }
   },
   validations: {
     loginID : {
       required,
-      email,
-      // isUnique (value) {
-      //   if(value === "") return true
-      //   const email_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      //   return new Promise((resolve) => {
-      //     setTimeout(() => {
-      //       resolve(email_regex.test(value))
-      //     },350 + Math.random() * 300)
-      //   })
-      // }
+      email
     },
     password: {
       required,
@@ -65,7 +60,6 @@ export default {
     }
   },
   methods: {
-
     handleLogin() {
       this.$v.$touch();
       if (this.$v.$pending || this.$v.$error) {

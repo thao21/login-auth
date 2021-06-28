@@ -209,10 +209,10 @@ form#table-user {
 }
 .error-mess {
     margin: 0 0 10px;
-
 }
 .error-mess span{
     display: block;
+    font-size: 14px;
     color: #FF4D4F;
 }
 #table-user input[type="text"] {
