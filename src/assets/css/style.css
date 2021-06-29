@@ -214,6 +214,7 @@ form#table-user {
     display: block;
     font-size: 14px;
     color: #FF4D4F;
+    text-align: left;
 }
 #table-user input[type="text"] {
     width: 49%;
@@ -239,6 +240,7 @@ form#table-user {
 }
 .table-data {
     margin-top: 40px;
+    width: 85%;
 }
 ::-webkit-input-placeholder {
     color: #888;
@@ -276,6 +278,9 @@ form#table-user {
         margin-bottom: 5px;
     }
     #table-user button.search-button {
+        width: 100%;
+    }
+    .table-data {
         width: 100%;
     }
 }

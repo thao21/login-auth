@@ -1,5 +1,5 @@
+import { SECRET_KEY, TWO_MINUTES } from "../config";
 import { userService } from "./user.service";
-import CONFIG from "../config";
 
 const JWT = require("jsonwebtoken");
 
@@ -12,12 +12,14 @@ export const HTTP_STATUS = {
 export default {
 
     buildResponse(status, body) {
-        return {
-            status: status,
-            data: body
+        let resp = { status : status };
+        if (status !== HTTP_STATUS.OK) {
+            resp.message = body;
+        } else {
+            resp.data = body;
         }
+        return resp;
     },
-
     /**
      * Authenticate the request by email/password
      * 
@@ -27,8 +29,7 @@ export default {
     authenticate(request) {
         let user = userService.findByEmail(request.email);
         if (user == null || user.password !== request.pwd) {
-            // username or password is incorrect
-            return this.buildResponse(HTTP_STATUS.UNAUTHORIZED);
+            return this.buildResponse(HTTP_STATUS.UNAUTHORIZED, "Wrong username or password!");
         }
         // Request user has found
         let payload = {
@@ -37,8 +38,9 @@ export default {
         }
         return this.buildResponse( HTTP_STATUS.OK, {
             user: payload,
-            jwt_token: JWT.sign(payload, CONFIG.SECRET_KEY, { expiresIn: CONFIG.TWO_MINUTES })
-        });        
+            jwt_token: JWT.sign(payload, SECRET_KEY, { expiresIn: TWO_MINUTES })
+        });                        
+        
     },
 
     /**
@@ -49,7 +51,7 @@ export default {
      */
     verify(jwt_token) {
         try {
-            return JWT.verify(jwt_token, CONFIG.SECRET_KEY);
+            return JWT.verify(jwt_token, SECRET_KEY);
         } catch (err) {
             return false;
         }

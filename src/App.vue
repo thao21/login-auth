@@ -5,24 +5,24 @@
 </template>
 
 <script>
+import { JWT_TOKEN_KEY } from './config';
 
 import Auth from "./services/auth";
-import CONFIG from "./config";
 
 export default {
   name: "App",
-  created() {
-    
-    let self = this;
+
+  created() {  
     setInterval(() => {
-      let token = localStorage.getItem(CONFIG.JWT_TOKEN_KEY);
-      if (token !== null && !Auth.verify(token)) {
-        self.$store.dispatch("logout")
+      let token = localStorage.getItem(JWT_TOKEN_KEY);
+      if (token != null && !Auth.verify(token)) {
+        this.$store.dispatch("logout")
+        this.$alert("Your session is exipred!!", "", "warning")
         .then(() => {
-          self.$router.push("/login");
-        });
+          this.$router.push( { name : "Login" } );   
+         });
       }
-    }, 60000);
+    }, 80000); // check per min
   },
 };
 </script>

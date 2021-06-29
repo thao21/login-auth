@@ -1,15 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { JWT_TOKEN_KEY } from "../config";
 
 Vue.use(Vuex);
 
 import Auth, { HTTP_STATUS } from '../services/auth'
-import CONFIG from "../config";
 
 export default new Vuex.Store({
   state: {
     status: '',
-    token: localStorage.getItem(CONFIG.JWT_TOKEN_KEY) || '',
+    token: localStorage.getItem(JWT_TOKEN_KEY) || '',
     user: {}
   },
   mutations: {
@@ -30,23 +30,29 @@ export default new Vuex.Store({
 
     login({ commit }, user) {
 
-    let response = Auth.authenticate(user);
-    if (response.status === HTTP_STATUS.OK) {
-      let token = response.data.jwt_token;
-      localStorage.setItem(CONFIG.JWT_TOKEN_KEY, token);
-      commit('AUTH_SUCCESS', token, user);
-    } else {
-      localStorage.removeItem(CONFIG.JWT_TOKEN_KEY);
-      commit('AUTH_ERROR');
-    }          
-
+      return new Promise((resolve, reject) => {
+        let response = Auth.authenticate(user);
+        if (response.status === HTTP_STATUS.OK) {
+          commit('AUTH_SUCCESS', response.data.jwt_token, user);
+          localStorage.setItem(JWT_TOKEN_KEY, this.state.token);
+          resolve(user);
+        } else {
+          commit('AUTH_ERROR');
+          localStorage.removeItem(JWT_TOKEN_KEY);
+          reject(response);
+        }              
+      });
     },
     logout({ commit }) {
-      localStorage.removeItem(CONFIG.JWT_TOKEN_KEY)
-      commit('AUTH_RESET')
+      return new Promise((resolve) => {
+      localStorage.removeItem(JWT_TOKEN_KEY)
+      commit('AUTH_RESET');
+      resolve();
+      })
     }
   },
   getters: {
-    isLoggedIn: state => Auth.verify(state.token)
+    isLoggedIn: state => Auth.verify(state.token),
+    getLoggedUser: state => state.user
   }
 })

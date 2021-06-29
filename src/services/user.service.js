@@ -6,28 +6,45 @@ export const userService = {
 
 const fakeUsers = [{
     code: 'warehouse_1',
-    email: 'wh123@gmail.com',
-    password: '12345',
+    email: 'wh1@dosoftpro.com',
+    password: '11111',
     name: 'Ware House 1'
 },
 {
     code: 'warehouse_2',
-    email: 'wh456@com',
-    password: '456',
+    email: 'wh2@dosoftpro.com',
+    password: '22222',
     name: 'Ware House 2'
 }
 ];
-
+/**
+ * Return user if found othewise NULL
+ * 
+ * @param {*} email 
+ * @returns 
+ */
 function findByEmail(email) {
-    let filteredUsers = fakeUsers.filter(v => v.email === email);
-    return filteredUsers.length > 0 ? filteredUsers[0] : null;
+    let users = fakeUsers.filter(v => v.email === email);
+    return users.length > 0 ? users[0] : null;
 }
 
+/**
+ * Return NULL if user's email already exists
+ * 
+ * @param {*} user 
+ * @returns 
+ */
 function add(user) {
-    if (user == null || findByEmail(user.email) != null) {
-        return false;
+    try {
+        if (findByEmail(user.email) != null) {
+            return null;
+        }
+        user.code = "warehouse_" + fakeUsers.length++;
+        fakeUsers.push(user);
+        return user;
+    } catch (err) {
+        console.log(err);
+        return null;
     }
-    user.code =  "warehouse_" + fakeUsers.length++;
-    fakeUsers.push(user);
-    return true;
+
 }
